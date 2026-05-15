@@ -1,9 +1,9 @@
 """
 engine.py  —  Portföy Optimizatörü
 Yalnızca:
-  1. Shortlist: ham_girdi_degerleri.xlsx → her kategoriden ilk 3
-  2. Markowitz: min-variance optimizasyonu (fiyat_verisi.xlsx)
-  3. Benchmark: gerçekleşen getiri (fiyat_verisi_25.xlsx)
+  1. Shortlist: ham_girdi_topsis.csv → her kategoriden ilk 3
+  2. Markowitz: min-variance optimizasyonu (fiyat_verisi.csv)
+  3. Benchmark: gerçekleşen getiri (fiyat_verisi_25.csv)
 """
 
 import os, warnings
@@ -14,7 +14,7 @@ from scipy.optimize import minimize
 warnings.filterwarnings("ignore")
 
 # ─── Sabitler ────────────────────────────────────────────────────────────────
-RISKSIZ_FAIZ = 0.45          # yıllık
+RISKSIZ_FAIZ = 0.45
 MIN_AGIRLIK  = 0.0
 MAX_AGIRLIK  = 0.25
 TRADING_DAYS = 249
@@ -32,27 +32,28 @@ KATEGORI_HISSELER = {
     "Enerji":               ["AKENR","AKSEN","AYDEM","BIOEN","ENJSA","GESAN","GWIND","KONTR","ODAS","ZOREN"],
 }
 
-# Ham girdi Excel → TOPSIS C skoru + kategori eşlemesi
-HAM_GIRDI_PATH = os.environ.get(
-    "HAM_GIRDI_PATH",
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ham_girdi_degerleri.xlsx"),
-)
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+
+HAM_GIRDI_CSV = os.path.join(DATA_DIR, "ham_girdi_topsis.csv")
+FIYAT_CSV     = os.path.join(DATA_DIR, "fiyat_verisi.csv")
+GERCEK_CSV    = os.path.join(DATA_DIR, "fiyat_verisi_25.csv")
+
 EXCEL_KAT_MAP = {
     "İnşaat GYO":   "İnşaat ve GYO",
     "Kimya Petrol": "Kimya Petrol Plastik",
 }
 
+
 # ─── Shortlist ────────────────────────────────────────────────────────────────
 def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_hisseler=None):
-    """Ham girdi Excel'inden her kategoride ilk 3 hisseyi al."""
     zorunlu    = zorunlu_hisseler    or []
     cikartilan = cikartilan_hisseler or []
 
-    tum_sonuclar = []   # [(ticker, kat, c_skor)]
+    tum_sonuclar = []
 
-    if os.path.exists(HAM_GIRDI_PATH):
+    if os.path.exists(HAM_GIRDI_CSV):
         try:
-            df_t = pd.read_csv(HAM_GIRDI_PATH, sheet_name="TOPSIS", engine="openpyxl")
+            df_t = pd.read_csv(HAM_GIRDI_CSV)
             df_t["_kat"] = df_t["Unnamed: 3"].ffill().map(lambda k: EXCEL_KAT_MAP.get(k, k) if pd.notna(k) else k)
             for kat in secilen_kategoriler:
                 kat_df = df_t[df_t["_kat"] == kat][["Ticker", "C skoru"]].dropna()
@@ -64,15 +65,13 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
     shortlist = []
     eklenen   = set()
 
-    # Zorunlu hisseler
     for ticker in zorunlu:
         entry = next((x for x in tum_sonuclar if x[0] == ticker), None)
         if entry and ticker not in eklenen and ticker not in cikartilan:
             shortlist.append({"ticker": ticker, "kategori": entry[1], "zorunlu": True})
             eklenen.add(ticker)
 
-    # Toplam 30 olacak şekilde her kategoriden eşit pay
-    n_kat      = len(secilen_kategoriler)
+    n_kat       = len(secilen_kategoriler)
     zorunlu_say = len(shortlist)
     kota        = (30 - zorunlu_say) // n_kat if n_kat else 0
 
@@ -91,15 +90,17 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
 
 
 # ─── Markowitz ────────────────────────────────────────────────────────────────
-def markowitz(tickers, fiyat_path,
+def markowitz(tickers, fiyat_path=None,
               min_agirlik=MIN_AGIRLIK,
               max_agirlik=MAX_AGIRLIK,
               risksiz_faiz=RISKSIZ_FAIZ,
               target_return=0.50):
-    if not os.path.exists(fiyat_path):
+
+    csv_path = FIYAT_CSV
+    if not os.path.exists(csv_path):
         return None, None, None
 
-    df = pd.read_csv(fiyat_path, index_col=0, engine="openpyxl")
+    df = pd.read_csv(csv_path, index_col=0)
     df.index = pd.to_datetime(df.index, errors="coerce")
     df = df.sort_index()
 
@@ -136,14 +137,13 @@ def markowitz(tickers, fiyat_path,
     w_opt       = res.x
     port_ret    = float(w_opt @ mu)
     port_vol    = float(np.sqrt(w_opt @ Sigma @ w_opt))
-    port_sharpe = (port_ret - RISKSIZ_FAIZ) / port_vol if port_vol > 0 else float("nan")
+    port_sharpe = (port_ret - risksiz_faiz) / port_vol if port_vol > 0 else float("nan")
 
-    # Efficient frontier — ret_lo: min varyans portföyü ile hedef arasındaki minimum
     res_mv = minimize(port_var, w0, method="SLSQP", bounds=bounds,
                       constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
                       options={"ftol": 1e-12, "maxiter": 1000})
     mv_ret = float(res_mv.x @ mu) if res_mv.success else float(np.min(mu))
-    ret_lo = min(mv_ret, target_return)   # portföy noktası her zaman frontier üzerinde
+    ret_lo = min(mv_ret, target_return)
     ret_hi = float(np.max(mu)) * 0.97
     frontier = []
     for tr in np.linspace(ret_lo, ret_hi, 30):
@@ -153,7 +153,7 @@ def markowitz(tickers, fiyat_path,
                       options={"ftol": 1e-10, "maxiter": 800})
         if r2.success:
             frontier.append({"vol": round(float(np.sqrt(r2.x @ Sigma @ r2.x)) * 100, 2),
-                             "ret": round(float(tr) * 100, 2)})  # float() → np.float64 değil
+                             "ret": round(float(tr) * 100, 2)})
 
     return mevcut, w_opt, {
         "getiri":     port_ret,
@@ -166,12 +166,13 @@ def markowitz(tickers, fiyat_path,
     }
 
 
-# ─── Gerçekleşen getiri (fiyat_verisi_25) ────────────────────────────────────
-def gerceklesen_zaman(tickers, weights, gercek_path):
-    if not gercek_path or not os.path.exists(gercek_path):
+# ─── Gerçekleşen getiri ───────────────────────────────────────────────────────
+def gerceklesen_zaman(tickers, weights, gercek_path=None):
+    csv_path = GERCEK_CSV
+    if not os.path.exists(csv_path):
         return []
     try:
-        df = pd.read_csv(gercek_path, index_col=0, engine="openpyxl")
+        df = pd.read_csv(csv_path, index_col=0)
         df.index = pd.to_datetime(df.index, errors="coerce")
         df = df.sort_index()
         pairs = [(t, w) for t, w in zip(tickers, weights) if t in df.columns]
@@ -187,12 +188,13 @@ def gerceklesen_zaman(tickers, weights, gercek_path):
         return []
 
 
-def benchmark_getiri(gercek_path):
+def benchmark_getiri(gercek_path=None):
     KOLONLAR = [("XU100","BIST 100"), ("XU030","BIST 30"), ("USDTRY","USD/TRY"), ("ALTIN","Altın")]
-    if not gercek_path or not os.path.exists(gercek_path):
+    csv_path = GERCEK_CSV
+    if not os.path.exists(csv_path):
         return {}
     try:
-        df = pd.read_csv(gercek_path, index_col=0, engine="openpyxl")
+        df = pd.read_csv(csv_path, index_col=0)
         df.index = pd.to_datetime(df.index, errors="coerce")
         df = df.sort_index()
         results = {}
@@ -228,11 +230,11 @@ def run_pipeline(
     shortlist = shortlist_olustur(secilen_kategoriler, zorunlu_hisseler, cikartilan_hisseler)
 
     if not shortlist:
-        return {"hata": "Shortlist oluşturulamadı. ham_girdi_degerleri.xlsx dosyasını kontrol edin."}
+        return {"hata": "Shortlist oluşturulamadı. ham_girdi_topsis.csv dosyasını kontrol edin."}
 
     sl_tickers = [s["ticker"] for s in shortlist]
     mk_tickers, mk_weights, mk_stats = markowitz(
-        sl_tickers, fiyat_path,
+        sl_tickers,
         min_agirlik=min_agirlik, max_agirlik=max_agirlik,
         risksiz_faiz=risksiz_faiz, target_return=target_return,
     )
@@ -252,13 +254,13 @@ def run_pipeline(
             "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
             "corr":       [[round(v, 4) for v in row] for row in mk_stats["corr"]],
             "frontier":   mk_stats["frontier"],
-            "zaman":      gerceklesen_zaman(mk_tickers, mk_weights, gercek_path),
+            "zaman":      gerceklesen_zaman(mk_tickers, mk_weights),
         }
 
     return {
         "shortlist":       shortlist,
         "markowitz":       markowitz_sonuc,
         "markowitz_uyari": markowitz_uyari,
-        "benchmark":       benchmark_getiri(gercek_path),
+        "benchmark":       benchmark_getiri(),
         "hata":            None,
     }
