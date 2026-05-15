@@ -96,7 +96,7 @@ def markowitz(tickers, fiyat_path=None,
               risksiz_faiz=RISKSIZ_FAIZ,
               target_return=0.50):
 
-    csv_path = FIYAT_CSV
+    csv_path = fiyat_path if fiyat_path and os.path.exists(fiyat_path) else FIYAT_CSV
     if not os.path.exists(csv_path):
         return None, None, None
 
@@ -168,7 +168,7 @@ def markowitz(tickers, fiyat_path=None,
 
 # ─── Gerçekleşen getiri ───────────────────────────────────────────────────────
 def gerceklesen_zaman(tickers, weights, gercek_path=None):
-    csv_path = GERCEK_CSV
+csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
     if not os.path.exists(csv_path):
         return []
     try:
@@ -190,7 +190,7 @@ def gerceklesen_zaman(tickers, weights, gercek_path=None):
 
 def benchmark_getiri(gercek_path=None):
     KOLONLAR = [("XU100","BIST 100"), ("XU030","BIST 30"), ("USDTRY","USD/TRY"), ("ALTIN","Altın")]
-    csv_path = GERCEK_CSV
+    csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
     if not os.path.exists(csv_path):
         return {}
     try:
@@ -254,13 +254,13 @@ def run_pipeline(
             "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
             "corr":       [[round(v, 4) for v in row] for row in mk_stats["corr"]],
             "frontier":   mk_stats["frontier"],
-            "zaman":      gerceklesen_zaman(mk_tickers, mk_weights),
+            "zaman":      gerceklesen_zaman(mk_tickers, mk_weights, gercek_path=gercek_path),
         }
 
     return {
         "shortlist":       shortlist,
         "markowitz":       markowitz_sonuc,
         "markowitz_uyari": markowitz_uyari,
-        "benchmark":       benchmark_getiri(),
+        "benchmark":       benchmark_getiri(gercek_path=gercek_path),
         "hata":            None,
     }
