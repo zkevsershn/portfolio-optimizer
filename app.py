@@ -22,7 +22,7 @@ import os, json
 from flask import Flask, request, jsonify, send_from_directory
 from engine import run_pipeline, KATEGORI_HISSELER
 
-app = Flask(__name__, static_folder="../frontend", static_url_path="")
+app = Flask(__name__, static_folder="frontend", static_url_path="")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # VERİ KLASÖRÜ  —  Excel dosyalarının bulunduğu yer
