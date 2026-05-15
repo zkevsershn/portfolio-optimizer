@@ -35,7 +35,7 @@ KATEGORI_HISSELER = {
 # Ham girdi Excel → TOPSIS C skoru + kategori eşlemesi
 HAM_GIRDI_PATH = os.environ.get(
     "HAM_GIRDI_PATH",
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "ham_girdi_degerleri.xlsx"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ham_girdi_degerleri.xlsx"),
 )
 EXCEL_KAT_MAP = {
     "İnşaat GYO":   "İnşaat ve GYO",
