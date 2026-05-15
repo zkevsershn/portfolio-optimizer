@@ -52,7 +52,7 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
 
     if os.path.exists(HAM_GIRDI_PATH):
         try:
-            df_t = pd.read_excel(HAM_GIRDI_PATH, sheet_name="TOPSIS", engine="openpyxl")
+            df_t = pd.read_csv(HAM_GIRDI_PATH, sheet_name="TOPSIS", engine="openpyxl")
             df_t["_kat"] = df_t["Unnamed: 3"].ffill().map(lambda k: EXCEL_KAT_MAP.get(k, k) if pd.notna(k) else k)
             for kat in secilen_kategoriler:
                 kat_df = df_t[df_t["_kat"] == kat][["Ticker", "C skoru"]].dropna()
@@ -99,7 +99,7 @@ def markowitz(tickers, fiyat_path,
     if not os.path.exists(fiyat_path):
         return None, None, None
 
-    df = pd.read_excel(fiyat_path, index_col=0, engine="openpyxl")
+    df = pd.read_csv(fiyat_path, index_col=0, engine="openpyxl")
     df.index = pd.to_datetime(df.index, errors="coerce")
     df = df.sort_index()
 
@@ -171,7 +171,7 @@ def gerceklesen_zaman(tickers, weights, gercek_path):
     if not gercek_path or not os.path.exists(gercek_path):
         return []
     try:
-        df = pd.read_excel(gercek_path, index_col=0, engine="openpyxl")
+        df = pd.read_csv(gercek_path, index_col=0, engine="openpyxl")
         df.index = pd.to_datetime(df.index, errors="coerce")
         df = df.sort_index()
         pairs = [(t, w) for t, w in zip(tickers, weights) if t in df.columns]
@@ -192,7 +192,7 @@ def benchmark_getiri(gercek_path):
     if not gercek_path or not os.path.exists(gercek_path):
         return {}
     try:
-        df = pd.read_excel(gercek_path, index_col=0, engine="openpyxl")
+        df = pd.read_csv(gercek_path, index_col=0, engine="openpyxl")
         df.index = pd.to_datetime(df.index, errors="coerce")
         df = df.sort_index()
         results = {}
