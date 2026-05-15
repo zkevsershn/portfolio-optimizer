@@ -30,7 +30,7 @@ app = Flask(__name__, static_folder="frontend", static_url_path="")
 # Farklı bir klasör kullanmak istersen DATA_DIR ortam değişkenini ayarla.
 # ─────────────────────────────────────────────────────────────────────────────
 BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR    = os.environ.get("DATA_DIR",    os.path.join(BASE_DIR, "..", "data"))
+DATA_DIR    = os.environ.get("DATA_DIR",    os.path.join(BASE_DIR, "data"))
 FIYAT_PATH  = os.environ.get("FIYAT_PATH",  os.path.join(DATA_DIR, "fiyat_verisi.xlsx"))
 PIYASA_PATH = os.environ.get("PIYASA_PATH", os.path.join(DATA_DIR, "piyasa_degeri.xlsx"))
 GERCEK_PATH = os.environ.get("GERCEK_PATH", os.path.join(DATA_DIR, "fiyat_verisi_25.xlsx"))
