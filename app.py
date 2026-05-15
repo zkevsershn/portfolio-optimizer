@@ -147,6 +147,8 @@ def api_markowitz_guncelle():
         "volatilite": round(mk_stats["volatilite"] * 100, 2),
         "sharpe":     round(mk_stats["sharpe"], 4),
         "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
+        "corr":       [[round(v, 4) for v in row] for row in mk_stats.get("corr", [])],
+        "frontier":   mk_stats.get("frontier", []),
         "zaman":      gerceklesen_zaman(mk_tickers, mk_weights, GERCEK_PATH),
         "benchmark":  benchmark_getiri(GERCEK_PATH),
     })
