@@ -96,7 +96,6 @@ def markowitz(tickers, fiyat_path=None,
               risksiz_faiz=RISKSIZ_FAIZ,
               target_return=0.50):
 
-    # FIX: fiyat_path parametresini kullan
     csv_path = fiyat_path if fiyat_path and os.path.exists(fiyat_path) else FIYAT_CSV
     if not os.path.exists(csv_path):
         return None, None, None
@@ -127,9 +126,8 @@ def markowitz(tickers, fiyat_path=None,
     bounds = [(max(0.0, min_agirlik), max_agirlik)] * n
     w0     = np.ones(n) / n
 
-    # FIX: maxiter düşürüldü
     res = minimize(port_var, w0, method="SLSQP", bounds=bounds,
-                   constraints=constraints, options={"ftol": 1e-9, "maxiter": 500})
+                   constraints=constraints, options={"ftol": 1e-12, "maxiter": 3000})
 
     if not res.success:
         return None, None, {"optimize_hatasi": res.message}
@@ -144,13 +142,12 @@ def markowitz(tickers, fiyat_path=None,
         "volatilite": port_vol,
         "sharpe":     port_sharpe,
         "mu":         mu.tolist(),
-        # corr ve frontier kaldırıldı — hesaplama yükü azaltıldı
+        "Sigma":      Sigma.tolist(),
     }
 
 
 # ─── Gerçekleşen getiri ───────────────────────────────────────────────────────
 def gerceklesen_zaman(tickers, weights, gercek_path=None):
-    # FIX: gercek_path parametresini kullan
     csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
     if not os.path.exists(csv_path):
         return []
@@ -173,7 +170,6 @@ def gerceklesen_zaman(tickers, weights, gercek_path=None):
 
 def benchmark_getiri(gercek_path=None):
     KOLONLAR = [("XU100","BIST 100"), ("XU030","BIST 30"), ("USDTRY","USD/TRY"), ("ALTIN","Altın")]
-    # FIX: gercek_path parametresini kullan
     csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
     if not os.path.exists(csv_path):
         return {}
@@ -219,7 +215,6 @@ def run_pipeline(
     sl_tickers = [s["ticker"] for s in shortlist]
     mk_tickers, mk_weights, mk_stats = markowitz(
         sl_tickers,
-        fiyat_path=fiyat_path,
         min_agirlik=min_agirlik, max_agirlik=max_agirlik,
         risksiz_faiz=risksiz_faiz, target_return=target_return,
     )
@@ -237,7 +232,6 @@ def run_pipeline(
             "volatilite": round(mk_stats["volatilite"] * 100, 2),
             "sharpe":     round(mk_stats["sharpe"], 4),
             "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
-            # corr ve frontier kaldırıldı
             "zaman":      gerceklesen_zaman(mk_tickers, mk_weights, gercek_path=gercek_path),
         }
 
@@ -245,7 +239,6 @@ def run_pipeline(
         "shortlist":       shortlist,
         "markowitz":       markowitz_sonuc,
         "markowitz_uyari": markowitz_uyari,
-        # FIX: gercek_path geçiliyor
         "benchmark":       benchmark_getiri(gercek_path=gercek_path),
         "hata":            None,
     }
