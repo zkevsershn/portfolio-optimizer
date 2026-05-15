@@ -39,7 +39,7 @@ GERCEK_PATH = os.environ.get("GERCEK_PATH", os.path.join(DATA_DIR, "fiyat_verisi
 @app.route("/")
 @requires_auth
 def index():
-    return send_from_directory("../frontend", "index.html")
+    return send_from_directory("frontend", "index.html")
 
 
 @app.route("/api/kategoriler")
