@@ -96,6 +96,7 @@ def markowitz(tickers, fiyat_path=None,
               risksiz_faiz=RISKSIZ_FAIZ,
               target_return=0.50):
 
+    # FIX: fiyat_path parametresini kullan
     csv_path = fiyat_path if fiyat_path and os.path.exists(fiyat_path) else FIYAT_CSV
     if not os.path.exists(csv_path):
         return None, None, None
@@ -116,8 +117,6 @@ def markowitz(tickers, fiyat_path=None,
 
     mu    = ret.mean().values * TRADING_DAYS
     Sigma = ret.cov().values  * TRADING_DAYS
-    std   = np.sqrt(np.diag(Sigma))
-    Corr  = np.clip(Sigma / np.outer(std, std), -1, 1)
 
     def port_var(w): return float(w @ Sigma @ w)
 
@@ -128,8 +127,9 @@ def markowitz(tickers, fiyat_path=None,
     bounds = [(max(0.0, min_agirlik), max_agirlik)] * n
     w0     = np.ones(n) / n
 
+    # FIX: maxiter düşürüldü
     res = minimize(port_var, w0, method="SLSQP", bounds=bounds,
-                   constraints=constraints, options={"ftol": 1e-12, "maxiter": 3000})
+                   constraints=constraints, options={"ftol": 1e-9, "maxiter": 500})
 
     if not res.success:
         return None, None, {"optimize_hatasi": res.message}
@@ -139,36 +139,19 @@ def markowitz(tickers, fiyat_path=None,
     port_vol    = float(np.sqrt(w_opt @ Sigma @ w_opt))
     port_sharpe = (port_ret - risksiz_faiz) / port_vol if port_vol > 0 else float("nan")
 
-    res_mv = minimize(port_var, w0, method="SLSQP", bounds=bounds,
-                      constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
-                      options={"ftol": 1e-12, "maxiter": 1000})
-    mv_ret = float(res_mv.x @ mu) if res_mv.success else float(np.min(mu))
-    ret_lo = min(mv_ret, target_return)
-    ret_hi = float(np.max(mu)) * 0.97
-    frontier = []
-    for tr in np.linspace(ret_lo, ret_hi, 30):
-        c2 = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0},
-              {"type": "eq", "fun": lambda w, tr=tr: float(w @ mu) - tr}]
-        r2 = minimize(port_var, w0, method="SLSQP", bounds=bounds, constraints=c2,
-                      options={"ftol": 1e-10, "maxiter": 800})
-        if r2.success:
-            frontier.append({"vol": round(float(np.sqrt(r2.x @ Sigma @ r2.x)) * 100, 2),
-                             "ret": round(float(tr) * 100, 2)})
-
     return mevcut, w_opt, {
         "getiri":     port_ret,
         "volatilite": port_vol,
         "sharpe":     port_sharpe,
         "mu":         mu.tolist(),
-        "Sigma":      Sigma.tolist(),
-        "corr":       Corr.tolist(),
-        "frontier":   frontier,
+        # corr ve frontier kaldırıldı — hesaplama yükü azaltıldı
     }
 
 
 # ─── Gerçekleşen getiri ───────────────────────────────────────────────────────
 def gerceklesen_zaman(tickers, weights, gercek_path=None):
-csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
+    # FIX: gercek_path parametresini kullan
+    csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
     if not os.path.exists(csv_path):
         return []
     try:
@@ -190,6 +173,7 @@ csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCE
 
 def benchmark_getiri(gercek_path=None):
     KOLONLAR = [("XU100","BIST 100"), ("XU030","BIST 30"), ("USDTRY","USD/TRY"), ("ALTIN","Altın")]
+    # FIX: gercek_path parametresini kullan
     csv_path = gercek_path if gercek_path and os.path.exists(gercek_path) else GERCEK_CSV
     if not os.path.exists(csv_path):
         return {}
@@ -235,6 +219,7 @@ def run_pipeline(
     sl_tickers = [s["ticker"] for s in shortlist]
     mk_tickers, mk_weights, mk_stats = markowitz(
         sl_tickers,
+        fiyat_path=fiyat_path,
         min_agirlik=min_agirlik, max_agirlik=max_agirlik,
         risksiz_faiz=risksiz_faiz, target_return=target_return,
     )
@@ -252,8 +237,7 @@ def run_pipeline(
             "volatilite": round(mk_stats["volatilite"] * 100, 2),
             "sharpe":     round(mk_stats["sharpe"], 4),
             "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
-            "corr":       [[round(v, 4) for v in row] for row in mk_stats["corr"]],
-            "frontier":   mk_stats["frontier"],
+            # corr ve frontier kaldırıldı
             "zaman":      gerceklesen_zaman(mk_tickers, mk_weights, gercek_path=gercek_path),
         }
 
@@ -261,6 +245,7 @@ def run_pipeline(
         "shortlist":       shortlist,
         "markowitz":       markowitz_sonuc,
         "markowitz_uyari": markowitz_uyari,
+        # FIX: gercek_path geçiliyor
         "benchmark":       benchmark_getiri(gercek_path=gercek_path),
         "hata":            None,
     }
