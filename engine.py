@@ -157,22 +157,25 @@ def markowitz(tickers, fiyat_path=None,
     port_vol    = float(np.sqrt(w_opt @ Sigma @ w_opt))
     port_sharpe = (port_ret - risksiz_faiz) / port_vol if port_vol > 0 else float("nan")
 
-    # ── Efficient frontier ───────────────────────────────────────────────────
+    # ── Efficient frontier (fast sweep) ─────────────────────────────────────
     res_mv = minimize(port_var, w0, method="SLSQP", bounds=bounds,
                       constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
-                      options={"ftol": 1e-12, "maxiter": 1000})
+                      options={"ftol": 1e-9, "maxiter": 500})
     mv_ret = float(res_mv.x @ mu) if res_mv.success else float(np.min(mu))
     ret_lo = min(mv_ret, target_return)
-    ret_hi = float(np.max(mu)) * 0.97
+    ret_hi = float(np.max(mu)) * 0.95
     frontier = []
-    for tr in np.linspace(ret_lo, ret_hi, 30):
+    for tr in np.linspace(ret_lo, ret_hi, 20):
         c2 = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0},
               {"type": "eq", "fun": lambda w, tr=tr: float(w @ mu) - tr}]
-        r2 = minimize(port_var, w0, method="SLSQP", bounds=bounds, constraints=c2,
-                      options={"ftol": 1e-10, "maxiter": 800})
-        if r2.success:
-            frontier.append({"vol": round(float(np.sqrt(r2.x @ Sigma @ r2.x)) * 100, 2),
-                             "ret": round(float(tr) * 100, 2)})
+        try:
+            r2 = minimize(port_var, w0, method="SLSQP", bounds=bounds, constraints=c2,
+                          options={"ftol": 1e-8, "maxiter": 200})
+            if r2.success:
+                frontier.append({"vol": round(float(np.sqrt(r2.x @ Sigma @ r2.x)) * 100, 2),
+                                 "ret": round(float(tr) * 100, 2)})
+        except Exception:
+            pass
 
     return mevcut, w_opt, {
         "getiri":     port_ret,
