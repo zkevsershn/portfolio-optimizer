@@ -1,6 +1,6 @@
 """
 engine.py  —  Portföy Optimizatörü
-  1. Shortlist: ham_girdi_degerleri.csv → TOPSIS C skoru
+  1. Shortlist: ham_girdi_topsis.csv → TOPSIS C skoru
   2. Markowitz: min-variance optimizasyonu (fiyat_verisi.csv)
   3. Benchmark: fiyat_verisi_25.csv — uygulama başında bir kez okunur, cache'lenir
 """
@@ -34,7 +34,7 @@ KATEGORI_HISSELER = {
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.environ.get("DATA_DIR", os.path.join(BASE_DIR, "data"))
 
-HAM_GIRDI_PATH = os.environ.get("HAM_GIRDI_PATH", os.path.join(DATA_DIR, "ham_girdi_degerleri.csv"))
+HAM_GIRDI_PATH = os.environ.get("HAM_GIRDI_PATH", os.path.join(DATA_DIR, "ham_girdi_topsis.csv"))
 FIYAT_PATH     = os.environ.get("FIYAT_PATH",     os.path.join(DATA_DIR, "fiyat_verisi.csv"))
 GERCEK_PATH    = os.environ.get("GERCEK_PATH",    os.path.join(DATA_DIR, "fiyat_verisi_25.csv"))
 
@@ -42,12 +42,6 @@ EXCEL_KAT_MAP = {
     "İnşaat GYO":   "İnşaat ve GYO",
     "Kimya Petrol": "Kimya Petrol Plastik",
 }
-
-# ─── Yardımcı: CSV veya Excel okuma ──────────────────────────────────────────
-def _oku(path, **kwargs):
-    if path.endswith(".csv"):
-        return pd.read_csv(path, **kwargs)
-    return pd.read_excel(path, engine="openpyxl", **kwargs)
 
 # ─── Uygulama başında bir kez oku, bellekte tut ──────────────────────────────
 _fiyat_df  = None
@@ -58,7 +52,7 @@ def _fiyat_yukle():
     global _fiyat_df
     if _fiyat_df is None and os.path.exists(FIYAT_PATH):
         try:
-            df = _oku(FIYAT_PATH, index_col=0)
+            df = pd.read_csv(FIYAT_PATH, index_col=0)
             df.index = pd.to_datetime(df.index, errors="coerce")
             _fiyat_df = df.sort_index()
             print(f"[OK] fiyat_verisi yüklendi: {_fiyat_df.shape}")
@@ -70,7 +64,7 @@ def _gercek_yukle():
     global _gercek_df
     if _gercek_df is None and os.path.exists(GERCEK_PATH):
         try:
-            df = _oku(GERCEK_PATH, index_col=0)
+            df = pd.read_csv(GERCEK_PATH, index_col=0)
             df.index = pd.to_datetime(df.index, errors="coerce")
             _gercek_df = df.sort_index()
             print(f"[OK] fiyat_verisi_25 yüklendi: {_gercek_df.shape}")
@@ -82,10 +76,7 @@ def _ham_yukle():
     global _ham_df
     if _ham_df is None and os.path.exists(HAM_GIRDI_PATH):
         try:
-            if HAM_GIRDI_PATH.endswith(".csv"):
-                _ham_df = pd.read_csv(HAM_GIRDI_PATH)
-            else:
-                _ham_df = pd.read_excel(HAM_GIRDI_PATH, sheet_name="TOPSIS", engine="openpyxl")
+            _ham_df = pd.read_csv(HAM_GIRDI_PATH)
             print(f"[OK] ham_girdi yüklendi: {_ham_df.shape}")
         except Exception as e:
             print(f"[HATA] ham_girdi okunamadı: {e}")
@@ -133,8 +124,9 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
     if df_t is not None:
         try:
             df_t = df_t.copy()
+            # Unnamed: 3 kolonu kategori adını tutuyor, ffill ile doldur
             df_t["_kat"] = df_t["Unnamed: 3"].ffill().map(
-                lambda k: EXCEL_KAT_MAP.get(k, k) if pd.notna(k) else k
+                lambda k: EXCEL_KAT_MAP.get(str(k).strip(), str(k).strip()) if pd.notna(k) else k
             )
             for kat in secilen_kategoriler:
                 kat_df = df_t[df_t["_kat"] == kat][["Ticker", "C skoru"]].dropna()
@@ -171,8 +163,6 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
 
 
 # ─── Markowitz ────────────────────────────────────────────────────────────────
-# Korelasyon matrisi ve Sigma dönüşü kaldırıldı.
-# Frontier: 10 nokta, daha az iterasyon.
 def markowitz(tickers, fiyat_path=None,
               min_agirlik=MIN_AGIRLIK,
               max_agirlik=MAX_AGIRLIK,
@@ -244,7 +234,7 @@ def markowitz(tickers, fiyat_path=None,
     }
 
 
-# ─── Gerçekleşen getiri — sadece model portföyü için her seferinde hesaplanır ─
+# ─── Gerçekleşen getiri — model portföyü için her seferinde hesaplanır ───────
 def gerceklesen_zaman(tickers, weights, _unused=None):
     df = _gercek_yukle()
     if df is None:
@@ -282,7 +272,7 @@ def run_pipeline(
     shortlist = shortlist_olustur(secilen_kategoriler, zorunlu_hisseler, cikartilan_hisseler)
 
     if not shortlist:
-        return {"hata": "Shortlist oluşturulamadı. ham_girdi_degerleri dosyasını kontrol edin."}
+        return {"hata": "Shortlist oluşturulamadı. ham_girdi_topsis.csv dosyasını kontrol edin."}
 
     sl_tickers = [s["ticker"] for s in shortlist]
     mk_tickers, mk_weights, mk_stats = markowitz(
