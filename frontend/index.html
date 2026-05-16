@@ -393,7 +393,7 @@
 
     <div class="action-row">
       <button class="btn" onclick="goStep(2)">← Geri</button>
-      <button class="btn btn-primary" onclick="goStep(4)">Sonucu gör →</button>
+      <button class="btn btn-primary" onclick="goToStep4()">Sonucu gör →</button>
     </div>
   </div>
 
@@ -814,20 +814,22 @@ function drawHeatmap() {
   });
 }
 
-// Slider debounce
-function onSliderInput(val) {
+// Slider: oninput sadece sayıyı günceller, onchange API çağırır
+async function onSliderInput(val) {
   state.targetReturn = parseInt(val);
   document.getElementById('sliderVal').textContent = '%' + val;
-  document.getElementById('mRet').textContent = '%' + val;  // anlık güncelle
-  clearTimeout(state.sliderDebounce);
-  state.sliderDebounce = setTimeout(async () => {
-    const tickers = (state.markResult?.tickers) ||
-      (state.apiResult?.shortlist || []).filter(s => !state.excludedTickers.has(s.ticker)).map(s=>s.ticker);
-    await fetchMarkowitz(tickers, state.targetReturn);
-    renderStep3();
-    if (state.frontierChart) drawFrontier();
-    if (!document.getElementById('tabCorr').classList.contains('hidden')) drawHeatmap();
-  }, 500);
+  document.getElementById('mRet').textContent = '%' + val;
+
+  const tickers = (state.markResult?.tickers) ||
+    (state.apiResult?.shortlist || []).filter(s => !state.excludedTickers.has(s.ticker)).map(s=>s.ticker);
+
+  document.getElementById('weightList').innerHTML =
+    '<div class="spinner-wrap"><div class="spinner"></div><div class="muted">Hesaplanıyor…</div></div>';
+
+  await fetchMarkowitz(tickers, state.targetReturn);
+  renderStep3();
+  if (state.frontierChart) drawFrontier();
+  if (state.currentStep === 4) renderStep4();
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -986,6 +988,10 @@ window.goStep = function(n) {
   _goStep(n);
   if (n === 4) renderStep4();
 };
+
+function goToStep4() {
+  goStep(4);
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // TABS
