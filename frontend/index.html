@@ -328,7 +328,8 @@
       <div class="slider-wrap">
         <label>Minimum yıllık beklenen getiri</label>
         <input type="range" id="retSlider" min="10" max="120" value="50" step="1"
-               oninput="onSliderInput(this.value)" style="flex:1" />
+               oninput="document.getElementById('sliderVal').textContent='%'+this.value; document.getElementById('mRet').textContent='%'+this.value;"
+               onchange="onSliderInput(this.value)" style="flex:1" />
         <div class="slider-val" id="sliderVal">%50</div>
       </div>
       <div class="slider-hint" id="sliderHint">
