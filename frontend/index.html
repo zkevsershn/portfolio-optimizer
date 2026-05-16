@@ -355,7 +355,7 @@
       <div class="tabs" id="s3tabs">
         <div class="tab active" data-tab="tabWeights" onclick="switchTab(this,'s3tabs','tabWeights')">Ağırlıklar</div>
         <div class="tab" data-tab="tabFrontier" onclick="switchTab(this,'s3tabs','tabFrontier');drawFrontier()">Efficient frontier</div>
-        <div class="tab" data-tab="tabCorr" onclick="switchTab(this,'s3tabs','tabCorr');drawHeatmap()">Korelasyon</div>
+
       </div>
 
       <div id="tabWeights">
@@ -375,19 +375,7 @@
         </div>
       </div>
 
-      <div id="tabCorr" class="hidden">
-        <div class="info-box mb-half">
-          <strong>Korelasyon matrisi</strong>: İki hissenin ne kadar birlikte hareket ettiğini gösterir.
-          Korelasyon 1'e yakınsa aynı yönde hareket eder. Düşük veya negatif korelasyon portföy riskini düşürür.
-        </div>
-        <div class="heatmap-wrap"><table class="hm-table" id="hmTable"></table></div>
-        <div class="legend" style="margin-top:10px">
-          <div class="leg-item">
-            <div style="width:90px;height:10px;border-radius:4px;background:linear-gradient(to right,#FFFFFF,#C0392B)"></div>
-            <span>Düşük → Yüksek korelasyon</span>
-          </div>
-        </div>
-      </div>
+
 
     </div>
 
@@ -782,37 +770,7 @@ function drawFrontier() {
   });
 }
 
-function drawHeatmap() {
-  const mk = state.markResult;
-  if (!mk || !mk.corr) return;
-  const tickers = mk.tickers;
-  const corr    = mk.corr;
-  const tbl = document.getElementById('hmTable');
-  tbl.innerHTML = '';
 
-  const hdr = document.createElement('tr');
-  hdr.innerHTML = '<th></th>' + tickers.map(t => `<th>${t}</th>`).join('');
-  tbl.appendChild(hdr);
-
-  tickers.forEach((rt, ri) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<th style="text-align:left;padding:5px 9px;font-weight:600;color:var(--text-2)">${rt}</th>`;
-    tickers.forEach((ct, ci) => {
-      const v  = corr[ri][ci];
-      const t2 = (v + 1) / 2;
-      const r  = Math.round(255 - t2 * 63);
-      const g  = Math.round(255 - t2 * 198);
-      const b  = Math.round(255 - t2 * 198);
-      const td = document.createElement('td');
-      td.className = 'hm-cell';
-      td.style.background = `rgb(${r},${g},${b})`;
-      td.style.color = v > 0.5 ? '#FFFFFF' : '#0D3040';
-      td.textContent = v.toFixed(2);
-      tr.appendChild(td);
-    });
-    tbl.appendChild(tr);
-  });
-}
 
 // Slider: oninput sadece sayıyı günceller, onchange API çağırır
 async function onSliderInput(val) {
@@ -1000,7 +958,7 @@ function switchTab(el, tabGroupId, targetTabId) {
   const card = el.closest('.card');
   card.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  const allTabContents = ['tabHisseler','tabMerec','tabWeights','tabFrontier','tabCorr'];
+  const allTabContents = ['tabHisseler','tabMerec','tabWeights','tabFrontier'];
   allTabContents.forEach(id => {
     const el2 = document.getElementById(id);
     if (el2) el2.classList.add('hidden');
