@@ -124,7 +124,6 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
     if df_t is not None:
         try:
             df_t = df_t.copy()
-            # Unnamed: 3 kolonu kategori adını tutuyor, ffill ile doldur
             df_t["_kat"] = df_t["Unnamed: 3"].ffill().map(
                 lambda k: EXCEL_KAT_MAP.get(str(k).strip(), str(k).strip()) if pd.notna(k) else k
             )
@@ -189,28 +188,39 @@ def markowitz(tickers, fiyat_path=None,
     bounds = [(max(0.0, min_agirlik), max_agirlik)] * n
     w0     = np.ones(n) / n
 
+    # Target'ı portföyün ulaşabileceği maksimuma kırp
+    mu_max = float(np.max(mu))
+    target_gercek = min(target_return, mu_max * 0.97)
+
     res = minimize(port_var, w0, method="SLSQP", bounds=bounds,
                    constraints=[
                        {"type": "eq", "fun": lambda w: np.sum(w) - 1.0},
-                       {"type": "eq", "fun": lambda w: float(w @ mu) - target_return},
+                       {"type": "eq", "fun": lambda w: float(w @ mu) - target_gercek},
                    ],
                    options={"ftol": 1e-9, "maxiter": 500})
 
     if not res.success:
-        return None, None, {"optimize_hatasi": res.message}
+        # Fallback: sadece min varyans, getiri kısıtı olmadan
+        res = minimize(port_var, w0, method="SLSQP", bounds=bounds,
+                       constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
+                       options={"ftol": 1e-9, "maxiter": 500})
+        if not res.success:
+            return None, None, {"optimize_hatasi": res.message}
 
     w_opt       = res.x
     port_ret    = float(w_opt @ mu)
     port_vol    = float(np.sqrt(w_opt @ Sigma @ w_opt))
     port_sharpe = (port_ret - risksiz_faiz) / port_vol if port_vol > 0 else float("nan")
 
-    # Frontier — 10 nokta
+    # Min varyans noktası
     res_mv = minimize(port_var, w0, method="SLSQP", bounds=bounds,
                       constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
                       options={"ftol": 1e-9, "maxiter": 300})
     mv_ret = float(res_mv.x @ mu) if res_mv.success else float(np.min(mu))
-    ret_lo = min(mv_ret, target_return)
-    ret_hi = float(np.max(mu)) * 0.97
+
+    # Frontier — min varyans noktasından mu_max'a kadar 10 nokta
+    ret_lo = mv_ret
+    ret_hi = mu_max * 0.95
     frontier = []
     for tr in np.linspace(ret_lo, ret_hi, 10):
         r2 = minimize(port_var, w0, method="SLSQP", bounds=bounds,
@@ -231,10 +241,11 @@ def markowitz(tickers, fiyat_path=None,
         "sharpe":     port_sharpe,
         "mu":         mu.tolist(),
         "frontier":   frontier,
+        "target_gercek": round(target_gercek * 100, 2),  # UI'a bilgi ver
     }
 
 
-# ─── Gerçekleşen getiri — model portföyü için her seferinde hesaplanır ───────
+# ─── Gerçekleşen getiri ───────────────────────────────────────────────────────
 def gerceklesen_zaman(tickers, weights, _unused=None):
     df = _gercek_yukle()
     if df is None:
@@ -298,6 +309,7 @@ def run_pipeline(
             "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
             "frontier":   mk_stats["frontier"],
             "zaman":      gerceklesen_zaman(mk_tickers, mk_weights),
+            "target_gercek": mk_stats.get("target_gercek"),
         }
 
     return {
