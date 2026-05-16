@@ -30,7 +30,10 @@ app = Flask(__name__, static_folder="frontend", static_url_path="")
 # Farklı bir klasör kullanmak istersen DATA_DIR ortam değişkenini ayarla.
 # ─────────────────────────────────────────────────────────────────────────────
 BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.environ.get("DATA_DIR", os.path.join(BASE_DIR, "data"))
+DATA_DIR    = os.environ.get("DATA_DIR",    os.path.join(BASE_DIR, "data"))
+FIYAT_PATH  = os.environ.get("FIYAT_PATH",  os.path.join(DATA_DIR, "fiyat_verisi.xlsx"))
+PIYASA_PATH = os.environ.get("PIYASA_PATH", os.path.join(DATA_DIR, "piyasa_degeri.xlsx"))
+GERCEK_PATH = os.environ.get("GERCEK_PATH", os.path.join(DATA_DIR, "fiyat_verisi_25.xlsx"))
 
 
 @app.route("/")
@@ -81,12 +84,15 @@ def api_hesapla():
         secilen_kategoriler  = kategoriler,
         zorunlu_hisseler     = zorunlu,
         data_dir             = DATA_DIR,
+        fiyat_path           = FIYAT_PATH,
+        piyasa_path          = PIYASA_PATH,
         hissec_sayisi        = hisse_sayisi,
         min_agirlik          = min_agirlik,
         max_agirlik          = max_agirlik,
         risksiz_faiz         = risksiz_faiz,
         target_return        = target_return,
         cikartilan_hisseler  = cikartilan,
+        gercek_path          = GERCEK_PATH,
     )
 
     if result.get("hata"):
@@ -110,7 +116,7 @@ def api_markowitz_guncelle():
       "target_return":  0.70
     }
     """
-    from engine import markowitz, benchmark_getiri, gerceklesen_zaman
+    from engine import markowitz, benchmark_getiri
     body = request.get_json(silent=True) or {}
 
     tickers       = body.get("tickers", [])
@@ -134,6 +140,7 @@ def api_markowitz_guncelle():
     if mk_tickers is None:
         return jsonify({"hata": "Markowitz hesaplanamadı."}), 500
 
+    from engine import gerceklesen_zaman
     return jsonify({
         "tickers":    mk_tickers,
         "weights":    [round(float(w), 6) for w in mk_weights],
@@ -141,8 +148,8 @@ def api_markowitz_guncelle():
         "volatilite": round(mk_stats["volatilite"] * 100, 2),
         "sharpe":     round(mk_stats["sharpe"], 4),
         "mu":         [round(x * 100, 2) for x in mk_stats["mu"]],
-        "corr":       [[round(v, 4) for v in row] for row in mk_stats.get("corr", [])],
-        "frontier":   mk_stats.get("frontier", []),
+        "corr":       [[round(v, 4) for v in row] for row in mk_stats["corr"]],
+        "frontier":   mk_stats["frontier"],
         "zaman":      gerceklesen_zaman(mk_tickers, mk_weights, GERCEK_PATH),
         "benchmark":  benchmark_getiri(GERCEK_PATH),
     })
