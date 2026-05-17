@@ -811,13 +811,14 @@ function renderStep4() {
   Object.entries(bm).forEach(([label, val]) => {
     bmRets[label] = typeof val === 'object' ? val.ret : val;
   });
-  const allRets = { 'Portföyünüz': mk.getiri, ...bmRets };
+  const portZamanSon = mk.zaman?.length ? mk.zaman[mk.zaman.length - 1].deger : null;
+  const allRets = { 'Portföyünüz': portZamanSon, ...bmRets };
 
   document.getElementById('benchMetrics').innerHTML = Object.entries(allRets).map(([label, ret]) => `
     <div class="metric-card ${label==='Portföyünüz'?'featured':''}">
       <div class="metric-lbl">${label}</div>
       <div class="metric-val ${label==='Portföyünüz'?'c-blue':''}">${ret!=null?'%'+ret.toFixed(1):'—'}</div>
-      <div class="metric-sub">${label==='Portföyünüz'?'hedef getiri':'Tem–Ara 2025'}</div>
+      <div class="metric-sub">${label==='Portföyünüz'?'Tem–Ara 2025':'Tem–Ara 2025'}</div>
     </div>`).join('');
 
   // ── Kümülatif getiri çizgi grafiği ──
