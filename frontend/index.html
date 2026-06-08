@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Portföy Optimizatörü — MEREC + TOPSIS + Markowitz</title>
+<title>Portfolio Optimizer — MEREC + TOPSIS + Markowitz</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
@@ -38,7 +38,7 @@
   /* ── Layout ── */
   .shell { max-width: 880px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
   .header { text-align: left; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--blue); }
-  .header h1 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: .06em; text-transform: uppercase; }
+  .header h1 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: .06em; }
   .header p  { font-size: 13px; color: var(--text-2); max-width: 520px; margin: 0; }
 
   /* ── Stepper ── */
@@ -215,6 +215,14 @@
   /* ── Separator ── */
   .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
 
+  /* ── Lang switcher ── */
+  .lang-switcher { display: flex; gap: 4px; }
+  .lang-btn { padding: 4px 11px; font-size: 12px; font-weight: 600; border-radius: var(--radius);
+              border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2);
+              cursor: pointer; transition: all .12s; letter-spacing: .04em; }
+  .lang-btn:hover { border-color: var(--blue-mid); color: var(--blue); }
+  .lang-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
   /* ── Utilities ── */
   .hidden  { display: none !important; }
   .muted   { font-size: 12px; color: var(--text-3); }
@@ -228,36 +236,43 @@
 <div class="shell">
 
   <!-- Header -->
-  <div class="header">
-    <h1>Portföy Optimizatörü</h1>
-    <p>MEREC + TOPSIS ile hisse seçimi, Markowitz ile portföy optimizasyonu.
-       Adım adım ilerleyerek kendi BİST portföyünüzü oluşturun.</p>
+  <div class="header" style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <h1 data-i18n="appTitle">PORTFÖY OPTİMİZATÖRÜ</h1>
+      <p data-i18n="appDesc">MEREC + TOPSIS ile hisse seçimi, Markowitz ile portföy optimizasyonu.
+         Adım adım ilerleyerek kendi BİST portföyünüzü oluşturun.</p>
+    </div>
+    <div class="lang-switcher" style="margin-top:4px">
+      <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    </div>
   </div>
 
   <!-- Stepper -->
   <div class="stepper">
     <div class="step-item active" id="pill1" onclick="tryGoStep(1)">
-      <div class="num">1</div><span>Kategoriler</span>
+      <div class="num">1</div><span data-i18n="step1Label">Kategoriler</span>
     </div>
     <div class="step-conn"></div>
     <div class="step-item" id="pill2" onclick="tryGoStep(2)">
-      <div class="num">2</div><span>Shortlist</span>
+      <div class="num">2</div><span data-i18n="step2Label">Shortlist</span>
     </div>
     <div class="step-conn"></div>
     <div class="step-item" id="pill3" onclick="tryGoStep(3)">
-      <div class="num">3</div><span>Portföy</span>
+      <div class="num">3</div><span data-i18n="step3Label">Portföy</span>
     </div>
     <div class="step-conn"></div>
     <div class="step-item" id="pill4" onclick="tryGoStep(4)">
-      <div class="num">4</div><span>Sonuç</span>
+      <div class="num">4</div><span data-i18n="step4Label">Sonuç</span>
     </div>
   </div>
 
   <!-- ════════════════════════════════════════════════ STEP 1 -->
   <div id="step1">
     <div class="card">
-      <div class="card-title">Hangi sektörlere yatırım yapmak istiyorsunuz?</div>
-      <div class="card-desc">
+      <div class="card-title" data-i18n="s1Title">Hangi sektörlere yatırım yapmak istiyorsunuz?</div>
+      <div class="card-desc" data-i18n="s1Desc">
         Birden fazla kategori seçebilirsiniz. Seçtiğiniz kategorilerdeki her hisse
         <strong>MEREC</strong> ve <strong>TOPSIS</strong>
         yöntemleriyle değerlendirilecek,
@@ -266,19 +281,19 @@
       <div class="cat-grid" id="catGrid"></div>
 
       <div class="must-section">
-        <span class="field-label">Portföyde kesinlikle olmasını istediğiniz hisseler <span class="muted">(opsiyonel)</span></span>
+        <span class="field-label" data-i18n="mustLabel">Portföyde kesinlikle olmasını istediğiniz hisseler <span class="muted">(opsiyonel)</span></span>
         <div class="input-row">
-          <input type="text" id="tickerInput" placeholder="BİST kodu yazın, örn: THYAO"
+          <input type="text" id="tickerInput" data-i18n-placeholder="mustPlaceholder" placeholder="BİST kodu yazın, örn: THYAO"
                  onkeydown="if(event.key==='Enter')addMustTicker()" />
-          <button class="btn btn-sm" onclick="addMustTicker()">Ekle</button>
+          <button class="btn btn-sm" data-i18n="addBtn" onclick="addMustTicker()">Ekle</button>
         </div>
         <div class="tags" id="mustTags"></div>
-        <div class="muted" style="margin-top:6px">Bu hisseler TOPSIS skoruna bakılmaksızın portföye dahil edilir.</div>
+        <div class="muted" data-i18n="mustHint" style="margin-top:6px">Bu hisseler TOPSIS skoruna bakılmaksızın portföye dahil edilir.</div>
       </div>
     </div>
 
     <div class="action-row">
-      <button class="btn btn-primary" id="btn1" onclick="submitStep1()">
+      <button class="btn btn-primary" id="btn1" onclick="submitStep1()" data-i18n="calcBtn">
         MEREC + TOPSIS hesapla →
       </button>
     </div>
@@ -287,12 +302,12 @@
   <!-- ════════════════════════════════════════════════ STEP 2 -->
   <div id="step2" class="hidden">
     <div class="card">
-      <div class="card-title">Shortlist — En iyi hisseler</div>
+      <div class="card-title" data-i18n="s2Title">Shortlist — En iyi hisseler</div>
       <div class="card-desc" id="s2desc"></div>
 
       <div class="tabs" id="s2tabs">
-        <div class="tab active" data-tab="tabHisseler" onclick="switchTab(this,'s2tabs','tabHisseler')">Hisse listesi</div>
-        <div class="tab" data-tab="tabMerec" onclick="switchTab(this,'s2tabs','tabMerec')">Kriter ağırlıkları (MEREC)</div>
+        <div class="tab active" data-tab="tabHisseler" onclick="switchTab(this,'s2tabs','tabHisseler')" data-i18n="tabStocks">Hisse listesi</div>
+        <div class="tab" data-tab="tabMerec" onclick="switchTab(this,'s2tabs','tabMerec')" data-i18n="tabMerec">Kriter ağırlıkları (MEREC)</div>
       </div>
 
       <div id="tabHisseler">
@@ -301,7 +316,7 @@
       </div>
 
       <div id="tabMerec" class="hidden">
-        <div class="info-box mb-half">
+        <div class="info-box mb-half" data-i18n="merecInfo">
           MEREC her kriteri, portföyden çıkardığında toplam puanın ne kadar
           değiştiğini ölçerek ağırlıklandırır. 
         </div>
@@ -310,52 +325,51 @@
     </div>
 
     <div class="action-row">
-      <button class="btn" onclick="goStep(1)">← Geri</button>
-      <button class="btn btn-primary" onclick="submitStep2()">Markowitz'e gönder →</button>
+      <button class="btn" data-i18n="backBtn" onclick="goStep(1)">← Geri</button>
+      <button class="btn btn-primary" data-i18n="sendMarkowitzBtn" onclick="submitStep2()">Markowitz modelini çalıştır →</button>
     </div>
   </div>
 
   <!-- ════════════════════════════════════════════════ STEP 3 -->
   <div id="step3" class="hidden">
     <div class="card">
-      <div class="card-title">Hedef getiri & Markowitz optimizasyonu</div>
-      <div class="card-desc">
+      <div class="card-title" data-i18n="s3Title">Hedef getiri & Markowitz optimizasyonu</div>
+      <div class="card-desc" data-i18n="s3Desc">
         Markowitz modeli, verdiğiniz beklenen getiriyi
         sağlarken portföy riskini en aza indirir.
         Risksiz faiz <strong>%45</strong>.
       </div>
 
       <div class="slider-wrap">
-        <label>Minimum yıllık beklenen getiri</label>
+        <label data-i18n="sliderLabel">Minimum yıllık beklenen getiri</label>
         <input type="range" id="retSlider" min="10" max="120" value="50" step="1"
                oninput="document.getElementById('sliderVal').textContent='%'+this.value; document.getElementById('mRet').textContent='%'+this.value;"
                onchange="onSliderInput(this.value)" style="flex:1" />
         <div class="slider-val" id="sliderVal">%50</div>
       </div>
-      <div class="slider-hint" id="sliderHint">
+      <div class="slider-hint" id="sliderHint" data-i18n="sliderHint">
         Markowitz bu getiriyi garanti ederken portföy riskini minimize eder.
         Getiri kısıtı çok yüksek tutulursa optimizasyon yakınsamayabilir.
       </div>
 
       <div class="metric-row" id="metricsRow">
         <div class="metric-card featured">
-          <div class="metric-lbl">Hedef getiri</div>
+          <div class="metric-lbl" data-i18n="metTargetRet">Hedef getiri</div>
           <div class="metric-val c-blue" id="mRet">—</div>
         </div>
         <div class="metric-card">
-          <div class="metric-lbl">Portföy riski</div>
+          <div class="metric-lbl" data-i18n="metRisk">Portföy riski</div>
           <div class="metric-val c-amber" id="mVol">—</div>
         </div>
         <div class="metric-card">
-          <div class="metric-lbl">Sharpe oranı</div>
+          <div class="metric-lbl" data-i18n="metSharpe">Sharpe oranı</div>
           <div class="metric-val" id="mSharpe">—</div>
         </div>
       </div>
 
       <div class="tabs" id="s3tabs">
-        <div class="tab active" data-tab="tabWeights" onclick="switchTab(this,'s3tabs','tabWeights')">Ağırlıklar</div>
-        <div class="tab" data-tab="tabFrontier" onclick="switchTab(this,'s3tabs','tabFrontier');drawFrontier()">Efficient frontier</div>
-
+        <div class="tab active" data-tab="tabWeights" onclick="switchTab(this,'s3tabs','tabWeights')" data-i18n="tabWeights">Ağırlıklar</div>
+        <div class="tab" data-tab="tabFrontier" onclick="switchTab(this,'s3tabs','tabFrontier');drawFrontier()" data-i18n="tabFrontier">Efficient frontier</div>
       </div>
 
       <div id="tabWeights">
@@ -364,31 +378,28 @@
 
       <div id="tabFrontier" class="hidden">
         <div class="info-box mb-half">
-          <strong>Efficient frontier</strong>: Her nokta farklı bir portföy kombinasyonunu gösterir.
+          <span data-i18n="frontierInfo"><strong>Efficient frontier</strong>: Her nokta farklı bir portföy kombinasyonunu gösterir.
           Mavi çizgi, aynı risk için en yüksek getiriyi sunan portföylerin sınırıdır.
-          İdeal olarak portföyünüzün bu çizgi üzerinde olması gerekir.
+          İdeal olarak portföyünüzün bu çizgi üzerinde olması gerekir.</span>
         </div>
         <div class="chart-wrap"><canvas id="frontierCanvas"></canvas></div>
         <div class="legend">
-          <div class="leg-item"><div class="leg-dot" style="background:#0E4D5F"></div>Efficient frontier</div>
-          <div class="leg-item"><div class="leg-dot" style="background:#C0392B;width:13px;height:13px"></div>Portföyünüz</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#0E4D5F"></div><span data-i18n="legendFrontier">Efficient frontier</span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#C0392B;width:13px;height:13px"></div><span data-i18n="legendPortfolio">Portföyünüz</span></div>
         </div>
       </div>
-
-
-
     </div>
 
     <div class="action-row">
-      <button class="btn" onclick="goStep(2)">← Geri</button>
-      <button class="btn btn-primary" onclick="goToStep4()">Sonucu gör →</button>
+      <button class="btn" data-i18n="backBtn" onclick="goStep(2)">← Geri</button>
+      <button class="btn btn-primary" data-i18n="seeResultBtn" onclick="goToStep4()">Sonucu gör →</button>
     </div>
   </div>
 
   <!-- ════════════════════════════════════════════════ STEP 4 -->
   <div id="step4" class="hidden">
     <div class="card">
-      <div class="card-title">Benchmark karşılaştırması</div>
+      <div class="card-title" data-i18n="s4BenchTitle">Benchmark karşılaştırması</div>
 
       <div class="metric-row" id="benchMetrics"></div>
       <div style="margin-top:1rem">
@@ -397,14 +408,14 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Nihai portföy ağırlıkları</div>
+      <div class="card-title" data-i18n="s4WeightsTitle">Nihai portföy ağırlıkları</div>
       <div class="card-desc" id="s4desc"></div>
       <div id="finalWeights"></div>
     </div>
 
     <div class="action-row">
-      <button class="btn" onclick="goStep(3)">← Geri</button>
-      <button class="btn btn-primary" onclick="window.print()">Raporu yazdır / PDF</button>
+      <button class="btn" data-i18n="backBtn" onclick="goStep(3)">← Geri</button>
+      <button class="btn btn-primary" data-i18n="printBtn" onclick="window.print()">Raporu yazdır / PDF</button>
     </div>
   </div>
 
@@ -451,7 +462,7 @@ function tryGoStep(n) {
 // ═══════════════════════════════════════════════════════════════════════
 async function buildCatGrid() {
   const grid = document.getElementById('catGrid');
-  grid.innerHTML = '<div class="muted">Kategoriler yükleniyor…</div>';
+  grid.innerHTML = `<div class="muted">${t('catsLoading')}</div>`;
   try {
     const res  = await fetch('/api/kategoriler');
     const data = await res.json();
@@ -470,7 +481,7 @@ async function buildCatGrid() {
       grid.appendChild(d);
     });
   } catch(e) {
-    grid.innerHTML = '<div class="warn-box">API bağlantısı kurulamadı. Flask çalışıyor mu?</div>';
+    grid.innerHTML = `<div class="warn-box">${t('apiConnError')}</div>`;
   }
 }
 
@@ -501,17 +512,17 @@ function removeMust(t) {
 
 async function submitStep1() {
   if (state.selectedCats.size === 0) {
-    alert('Lütfen en az bir kategori seçin.');
+    alert(t('alertSelectCat'));
     return;
   }
   const btn = document.getElementById('btn1');
   btn.disabled = true;
-  btn.textContent = 'Hesaplanıyor…';
+  btn.textContent = t('calcLoading2');
 
   goStep(2);
   document.getElementById('stockList').innerHTML = '';
   document.getElementById('step2').querySelector('.card').insertAdjacentHTML('beforeend',
-    '<div class="spinner-wrap" id="s2spinner"><div class="spinner"></div><div class="muted">MEREC + TOPSIS hesaplanıyor, lütfen bekleyin…</div></div>');
+    `<div class="spinner-wrap" id="s2spinner"><div class="spinner"></div><div class="muted">${t('calcLoading')}</div></div>`);
 
   try {
     const res  = await fetch('/api/hesapla', {
@@ -537,7 +548,7 @@ async function submitStep1() {
       `<div class="warn-box">Hata: ${e.message}</div>`;
   } finally {
     btn.disabled = false;
-    btn.textContent = 'MEREC + TOPSIS hesapla →';
+    btn.textContent = t('calcBtn');
     const sp = document.getElementById('s2spinner');
     if (sp) sp.remove();
   }
@@ -548,9 +559,7 @@ async function submitStep1() {
 // ═══════════════════════════════════════════════════════════════════════
 function renderStep2() {
   const sl = state.apiResult.shortlist || [];
-  document.getElementById('s2desc').innerHTML =
-    `${state.selectedCats.size} kategoriden <strong>${sl.length} hisse</strong> seçildi. ` +
-    `İstemediğiniz hisseleri listeden çıkarabilirsiniz — çıkarılan hisseler Markowitz hesabına dahil edilmez.`;
+  document.getElementById('s2desc').innerHTML = t('s2DescTpl', state.selectedCats.size, sl.length);
 
   // Hisse listesi
   const list = document.getElementById('stockList');
@@ -561,7 +570,7 @@ function renderStep2() {
     row.className = 'stock-row' + (s.zorunlu ? ' must-row' : '') + (isExcl ? ' excluded' : '');
     row.dataset.ticker = s.ticker;
     const catClass  = s.zorunlu ? ' must-badge' : '';
-    const exclLabel = isExcl ? 'Geri al' : 'Çıkar';
+    const exclLabel = isExcl ? t('restoreBtn') : t('excludeBtn');
     const exclClass = isExcl ? ' restore' : '';
     const mustBadge = s.zorunlu
       ? `<span class="stock-cat must-badge">Zorunlu</span>` : '';
@@ -581,12 +590,12 @@ function renderStep2() {
 function toggleExclude(ticker, btn) {
   if (state.excludedTickers.has(ticker)) {
     state.excludedTickers.delete(ticker);
-    btn.textContent = 'Çıkar';
+    btn.textContent = t('excludeBtn');
     btn.classList.remove('restore');
     btn.closest('.stock-row').classList.remove('excluded');
   } else {
     state.excludedTickers.add(ticker);
-    btn.textContent = 'Geri al';
+    btn.textContent = t('restoreBtn');
     btn.classList.add('restore');
     btn.closest('.stock-row').classList.add('excluded');
   }
@@ -627,13 +636,13 @@ async function submitStep2() {
     .map(s => s.ticker);
 
   if (finalTickers.length < 2) {
-    alert('Markowitz için en az 2 hisse gerekli.');
+    alert(t('alertMinStocks'));
     return;
   }
 
   goStep(3);
   document.getElementById('weightList').innerHTML =
-    '<div class="spinner-wrap"><div class="spinner"></div><div class="muted">Markowitz optimizasyonu çalışıyor…</div></div>';
+    `<div class="spinner-wrap"><div class="spinner"></div><div class="muted">${t('markLoading')}</div></div>`;
 
   await fetchMarkowitz(finalTickers, state.targetReturn);
   renderStep3();
@@ -674,7 +683,7 @@ async function fetchMarkowitz(tickers, targetReturn) {
 function renderStep3() {
   const mk = state.markResult;
   if (!mk) {
-    const uyari = state.apiResult?.markowitz_uyari || 'Markowitz hesaplanamadı. Hedef getiri bu hisse setiyle sağlanamıyor olabilir.';
+    const uyari = state.apiResult?.markowitz_uyari || t('markowitzError');
     document.getElementById('weightList').innerHTML =
       `<div class="warn-box">${uyari}</div>`;
     return;
@@ -689,8 +698,7 @@ function renderStep3() {
   sharpeEl.className = 'metric-val ' + (sharpe > 0.5 ? 'c-green' : sharpe > 0 ? 'c-amber' : 'c-red');
 
   document.getElementById('sliderHint').textContent =
-    `MB politika faizi %45 · Her birim risk için risksiz faizin üzerinde `+
-    `${sharpe.toFixed(2)} birim getiri elde ediyorsunuz.`;
+    t('sharpeHint', 45, sharpe.toFixed(2));
 
   renderWeightList(mk);
 }
@@ -721,7 +729,7 @@ function drawFrontier() {
 
   const frontier = mk.frontier || [];
   if (!frontier.length) {
-    canvas.parentElement.innerHTML = '<div style="padding:2rem;color:#888;text-align:center">Frontier verisi yok</div>';
+    canvas.parentElement.innerHTML = `<div style="padding:2rem;color:#888;text-align:center">${t('noFrontierData')}</div>`;
     return;
   }
 
@@ -736,11 +744,11 @@ function drawFrontier() {
   state.frontierChart = new Chart(canvas, {
     data: {
       datasets: [
-        { type:'line', label:'Efficient frontier',
+        { type:'line', label:t('legendFrontier'),
           data: frontier.map(p => ({x: p.vol, y: p.ret})),
           borderColor:'#0E4D5F', backgroundColor:'rgba(14,77,95,0.06)',
           borderWidth: 2.5, pointRadius: 0, tension: 0.4, fill: true },
-        { type:'scatter', label:'Portföyünüz',
+        { type:'scatter', label:t('legendPortfolio'),
           data:[{x: mk.volatilite, y: mk.getiri}],
           backgroundColor:'#C0392B', pointRadius: 10, pointStyle:'rectRot',
           pointHoverRadius: 12 },
@@ -751,17 +759,17 @@ function drawFrontier() {
       plugins: {
         legend: { display: false },
         tooltip: { callbacks: {
-          label: ctx => ` ${ctx.dataset.label}: Risk %${ctx.parsed.x.toFixed(1)}  |  Getiri %${ctx.parsed.y.toFixed(1)}`
+          label: ctx => ` ${ctx.dataset.label}: ${t('volAxisLabel').split(' ')[0]} %${ctx.parsed.x.toFixed(1)}  |  ${t('retAxisLabel').split(' ')[0]} %${ctx.parsed.y.toFixed(1)}`
         }}
       },
       scales: {
         x: { type: 'linear',
-             title:{ display:true, text:'Volatilite (risk) %', color:'#4A6272', font:{size:12} },
+             title:{ display:true, text:t('volAxisLabel'), color:'#4A6272', font:{size:12} },
              min: xMin, max: xMax,
              grid:{ color:'rgba(14,77,95,.06)' },
              ticks:{ color:'#4A6272', callback: v=>'%'+v } },
         y: { type: 'linear',
-             title:{ display:true, text:'Beklenen getiri %', color:'#4A6272', font:{size:12} },
+             title:{ display:true, text:t('retAxisLabel'), color:'#4A6272', font:{size:12} },
              min: yMin, max: yMax,
              grid:{ color:'rgba(14,77,95,.06)' },
              ticks:{ color:'#4A6272', callback: v=>'%'+v } },
@@ -782,7 +790,7 @@ async function onSliderInput(val) {
     (state.apiResult?.shortlist || []).filter(s => !state.excludedTickers.has(s.ticker)).map(s=>s.ticker);
 
   document.getElementById('weightList').innerHTML =
-    '<div class="spinner-wrap"><div class="spinner"></div><div class="muted">Hesaplanıyor…</div></div>';
+    `<div class="spinner-wrap"><div class="spinner"></div><div class="muted">${t('calcLoading2')}</div></div>`;
 
   await fetchMarkowitz(tickers, state.targetReturn);
   renderStep3();
@@ -801,29 +809,29 @@ function renderStep4() {
 
   if (!mk) {
     document.getElementById('benchMetrics').innerHTML =
-      '<div class="warn-box">Markowitz sonucu yok.</div>';
+      `<div class="warn-box">${t('markowitzNoResult')}</div>`;
     return;
   }
 
   // ── Metric cards ──
-  const BM_LABELS = { 'Portföyünüz': 'featured' };
+  const portLabel = t('portfolioLabel');
   const bmRets = {};
   Object.entries(bm).forEach(([label, val]) => {
     bmRets[label] = typeof val === 'object' ? val.ret : val;
   });
   const portZamanSon = mk.zaman?.length ? mk.zaman[mk.zaman.length - 1].deger : null;
-  const allRets = { 'Portföyünüz': portZamanSon, ...bmRets };
+  const allRets = { [portLabel]: portZamanSon, ...bmRets };
 
   document.getElementById('benchMetrics').innerHTML = Object.entries(allRets).map(([label, ret]) => `
-    <div class="metric-card ${label==='Portföyünüz'?'featured':''}">
+    <div class="metric-card ${label===portLabel?'featured':''}">
       <div class="metric-lbl">${label}</div>
-      <div class="metric-val ${label==='Portföyünüz'?'c-blue':''}">${ret!=null?'%'+ret.toFixed(1):'—'}</div>
-      <div class="metric-sub">${label==='Portföyünüz'?'Tem–Ara 2025':'Tem–Ara 2025'}</div>
+      <div class="metric-val ${label===portLabel?'c-blue':''}">${ret!=null?'%'+ret.toFixed(1):'—'}</div>
+      <div class="metric-sub">${t('periodLabel')}</div>
     </div>`).join('');
 
   // ── Kümülatif getiri çizgi grafiği ──
   const COLORS = {
-    'Portföyünüz': '#74C0FC',
+    [portLabel]:   '#74C0FC',
     'BIST 100':    '#F1C40F',
     'BIST 30':     '#2EC97A',
     'USD/TRY':     '#FF8070',
@@ -839,9 +847,9 @@ function renderStep4() {
   // Portföy
   if (portZaman.length) {
     datasets.push({
-      label:       'Portföyünüz',
+      label:       portLabel,
       data:        portZaman.map(p => p.deger),
-      borderColor: COLORS['Portföyünüz'],
+      borderColor: COLORS[portLabel],
       backgroundColor: 'rgba(116,192,252,0.08)',
       borderWidth: 2.5,
       pointRadius: 0,
@@ -857,7 +865,7 @@ function renderStep4() {
     val.zaman.forEach(p => { zamanMap[p.tarih] = p.deger; });
     datasets.push({
       label,
-      data:        labels.map(t => zamanMap[t] ?? null),
+      data:        labels.map(date => zamanMap[date] ?? null),
       borderColor: COLORS[label] || '#aaa',
       backgroundColor: 'transparent',
       borderWidth: 1.8,
@@ -904,7 +912,7 @@ function renderStep4() {
             callback: v => '%' + v.toFixed(0)
           },
           grid:  { color: 'rgba(120,128,160,0.15)' },
-          title: { display: true, text: 'Kümülatif Getiri (%)', color: '#7880A0', font: { size: 11 } }
+          title: { display: true, text: t('cumRetAxisLabel'), color: '#7880A0', font: { size: 11 } }
         }
       }
     }
@@ -970,6 +978,177 @@ function switchTab(el, tabGroupId, targetTabId) {
 // ═══════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// i18n
+// ═══════════════════════════════════════════════════════════════════════
+const TRANSLATIONS = {
+  tr: {
+    appTitle: "PORTFÖY OPTİMİZATÖRÜ",
+    appDesc: "MEREC + TOPSIS ile hisse seçimi, Markowitz ile portföy optimizasyonu. Adım adım ilerleyerek kendi BİST portföyünüzü oluşturun.",
+    step1Label: "Kategoriler", step2Label: "Shortlist", step3Label: "Portföy", step4Label: "Sonuç",
+    s1Title: "Hangi sektörlere yatırım yapmak istiyorsunuz?",
+    s1Desc: "Birden fazla kategori seçebilirsiniz. Seçtiğiniz kategorilerdeki her hisse <strong>MEREC</strong> ve <strong>TOPSIS</strong> yöntemleriyle değerlendirilecek, en iyi <strong>30 hisse</strong> shortlist'e alınacaktır.",
+    mustLabel: "Portföyde kesinlikle olmasını istediğiniz hisseler <span class=\"muted\">(opsiyonel)</span>",
+    mustPlaceholder: "BİST kodu yazın, örn: THYAO",
+    addBtn: "Ekle",
+    mustHint: "Bu hisseler TOPSIS skoruna bakılmaksızın portföye dahil edilir.",
+    calcBtn: "MEREC + TOPSIS hesapla →",
+    s2Title: "Shortlist — En iyi hisseler",
+    tabStocks: "Hisse listesi", tabMerec: "Kriter ağırlıkları (MEREC)",
+    merecInfo: "MEREC her kriteri, portföyden çıkardığında toplam puanın ne kadar değiştiğini ölçerek ağırlıklandırır.",
+    backBtn: "← Geri",
+    sendMarkowitzBtn: "Markowitz modelini çalıştır →",
+    s3Title: "Hedef getiri & Markowitz optimizasyonu",
+    s3Desc: "Markowitz modeli, verdiğiniz beklenen getiriyi sağlarken portföy riskini en aza indirir. Risksiz faiz <strong>%45</strong>.",
+    sliderLabel: "Minimum yıllık beklenen getiri",
+    sliderHint: "Markowitz bu getiriyi garanti ederken portföy riskini minimize eder. Getiri kısıtı çok yüksek tutulursa optimizasyon yakınsamayabilir.",
+    metTargetRet: "Hedef getiri", metRisk: "Portföy riski", metSharpe: "Sharpe oranı",
+    tabWeights: "Ağırlıklar", tabFrontier: "Efficient frontier",
+    frontierInfo: "<strong>Efficient frontier</strong>: Her nokta farklı bir portföy kombinasyonunu gösterir. Mavi çizgi, aynı risk için en yüksek getiriyi sunan portföylerin sınırıdır. İdeal olarak portföyünüzün bu çizgi üzerinde olması gerekir.",
+    legendFrontier: "Efficient frontier", legendPortfolio: "Portföyünüz",
+    seeResultBtn: "Sonucu gör →",
+    s4BenchTitle: "Benchmark karşılaştırması", s4WeightsTitle: "Nihai portföy ağırlıkları",
+    printBtn: "Raporu yazdır / PDF",
+    // dynamic strings
+    calcLoading: "MEREC + TOPSIS hesaplanıyor, lütfen bekleyin…",
+    markLoading: "Markowitz optimizasyonu çalışıyor…",
+    calcLoading2: "Hesaplanıyor…",
+    s2DescTpl: (n, m) => `${n} kategoriden <strong>${m} hisse</strong> seçildi. İstemediğiniz hisseleri listeden çıkarabilirsiniz — çıkarılan hisseler Markowitz hesabına dahil edilmez.`,
+    excludeBtn: "Çıkar", restoreBtn: "Geri al",
+    noFrontierData: "Frontier verisi yok",
+    markowitzError: "Markowitz hesaplanamadı. Hedef getiri bu hisse setiyle sağlanamıyor olabilir.",
+    markowitzNoResult: "Markowitz sonucu yok.",
+    apiConnError: "API bağlantısı kurulamadı. Flask çalışıyor mu?",
+    sharpeHint: (rf, s) => `MB politika faizi %${rf} · Her birim risk için risksiz faizin üzerinde ${s} birim getiri elde ediyorsunuz.`,
+    portfolioLabel: "Portföyünüz",
+    periodLabel: "Tem–Ara 2025",
+    volAxisLabel: "Volatilite (risk) %", retAxisLabel: "Beklenen getiri %",
+    cumRetAxisLabel: "Kümülatif Getiri (%)",
+    catsLoading: "Kategoriler yükleniyor…",
+    alertSelectCat: "Lütfen en az bir kategori seçin.",
+    alertMinStocks: "Markowitz için en az 2 hisse gerekli.",
+  },
+  en: {
+    appTitle: "PORTFOLIO OPTIMIZER",
+    appDesc: "Stock selection with MEREC + TOPSIS, portfolio optimization with Markowitz. Build your own BIST portfolio step by step.",
+    step1Label: "Categories", step2Label: "Shortlist", step3Label: "Portfolio", step4Label: "Results",
+    s1Title: "Which sectors do you want to invest in?",
+    s1Desc: "You can select multiple categories. Every stock in your selected categories will be evaluated using <strong>MEREC</strong> and <strong>TOPSIS</strong>, and the best <strong>30 stocks</strong> will be shortlisted.",
+    mustLabel: "Stocks you want to include in the portfolio <span class=\"muted\">(optional)</span>",
+    mustPlaceholder: "Enter BIST ticker, e.g. THYAO",
+    addBtn: "Add",
+    mustHint: "These stocks will be included regardless of their TOPSIS score.",
+    calcBtn: "Run MEREC + TOPSIS →",
+    s2Title: "Shortlist — Top stocks",
+    tabStocks: "Stock list", tabMerec: "Criterion weights (MEREC)",
+    merecInfo: "MEREC weights each criterion by measuring how much the total score changes when that criterion is removed from the portfolio.",
+    backBtn: "← Back",
+    sendMarkowitzBtn: "Run Markowitz model →",
+    s3Title: "Target return & Markowitz optimization",
+    s3Desc: "The Markowitz model minimizes portfolio risk while meeting your target return. Risk-free rate: <strong>45%</strong>.",
+    sliderLabel: "Minimum annual expected return",
+    sliderHint: "Markowitz minimizes portfolio risk while guaranteeing this return. Setting the target too high may cause convergence issues.",
+    metTargetRet: "Target return", metRisk: "Portfolio risk", metSharpe: "Sharpe ratio",
+    tabWeights: "Weights", tabFrontier: "Efficient frontier",
+    frontierInfo: "<strong>Efficient frontier</strong>: Each point represents a different portfolio combination. The blue line is the boundary of portfolios with the highest return for a given level of risk. Ideally your portfolio should lie on this line.",
+    legendFrontier: "Efficient frontier", legendPortfolio: "Your portfolio",
+    seeResultBtn: "See results →",
+    s4BenchTitle: "Benchmark comparison", s4WeightsTitle: "Final portfolio weights",
+    printBtn: "Print / Save as PDF",
+    calcLoading: "Running MEREC + TOPSIS, please wait…",
+    markLoading: "Running Markowitz optimization…",
+    calcLoading2: "Calculating…",
+    s2DescTpl: (n, m) => `<strong>${m} stocks</strong> selected from ${n} categories. You can remove unwanted stocks — excluded stocks will not be included in the Markowitz calculation.`,
+    excludeBtn: "Exclude", restoreBtn: "Restore",
+    noFrontierData: "No frontier data",
+    markowitzError: "Markowitz optimization failed. The target return may not be achievable with this set of stocks.",
+    markowitzNoResult: "No Markowitz result available.",
+    apiConnError: "Could not connect to API. Is Flask running?",
+    sharpeHint: (rf, s) => `Risk-free rate: ${rf}% · You earn ${s} units of return above the risk-free rate per unit of risk.`,
+    portfolioLabel: "Your Portfolio",
+    periodLabel: "Jul–Dec 2025",
+    volAxisLabel: "Volatility (risk) %", retAxisLabel: "Expected return %",
+    cumRetAxisLabel: "Cumulative Return (%)",
+    catsLoading: "Loading categories…",
+    alertSelectCat: "Please select at least one category.",
+    alertMinStocks: "At least 2 stocks are required for Markowitz.",
+  },
+  fr: {
+    appTitle: "OPTIMISEUR DE PORTEFEUILLE",
+    appDesc: "Sélection d'actions avec MEREC + TOPSIS, optimisation de portefeuille avec Markowitz. Construisez votre propre portefeuille BIST étape par étape.",
+    step1Label: "Catégories", step2Label: "Shortlist", step3Label: "Portefeuille", step4Label: "Résultats",
+    s1Title: "Dans quels secteurs voulez-vous investir ?",
+    s1Desc: "Vous pouvez sélectionner plusieurs catégories. Chaque action dans vos catégories sera évaluée avec <strong>MEREC</strong> et <strong>TOPSIS</strong>, et les meilleures <strong>30 actions</strong> seront présélectionnées.",
+    mustLabel: "Actions à inclure obligatoirement dans le portefeuille <span class=\"muted\">(optionnel)</span>",
+    mustPlaceholder: "Entrez un code BIST, ex : THYAO",
+    addBtn: "Ajouter",
+    mustHint: "Ces actions seront incluses quel que soit leur score TOPSIS.",
+    calcBtn: "Lancer MEREC + TOPSIS →",
+    s2Title: "Shortlist — Meilleures actions",
+    tabStocks: "Liste des actions", tabMerec: "Poids des critères (MEREC)",
+    merecInfo: "MEREC pondère chaque critère en mesurant combien le score total change lorsque ce critère est retiré du portefeuille.",
+    backBtn: "← Retour",
+    sendMarkowitzBtn: "Lancer le modèle Markowitz →",
+    s3Title: "Rendement cible & optimisation Markowitz",
+    s3Desc: "Le modèle Markowitz minimise le risque du portefeuille tout en atteignant votre rendement cible. Taux sans risque : <strong>45%</strong>.",
+    sliderLabel: "Rendement annuel minimum attendu",
+    sliderHint: "Markowitz minimise le risque du portefeuille tout en garantissant ce rendement. Un objectif trop élevé peut entraîner des problèmes de convergence.",
+    metTargetRet: "Rendement cible", metRisk: "Risque du portefeuille", metSharpe: "Ratio de Sharpe",
+    tabWeights: "Pondérations", tabFrontier: "Frontière efficiente",
+    frontierInfo: "<strong>Frontière efficiente</strong> : Chaque point représente une combinaison de portefeuille différente. La ligne bleue délimite les portefeuilles offrant le rendement le plus élevé pour un niveau de risque donné. Idéalement, votre portefeuille devrait se trouver sur cette ligne.",
+    legendFrontier: "Frontière efficiente", legendPortfolio: "Votre portefeuille",
+    seeResultBtn: "Voir les résultats →",
+    s4BenchTitle: "Comparaison avec le benchmark", s4WeightsTitle: "Pondérations finales du portefeuille",
+    printBtn: "Imprimer / Enregistrer en PDF",
+    calcLoading: "Exécution de MEREC + TOPSIS, veuillez patienter…",
+    markLoading: "Optimisation Markowitz en cours…",
+    calcLoading2: "Calcul en cours…",
+    s2DescTpl: (n, m) => `<strong>${m} actions</strong> sélectionnées dans ${n} catégories. Vous pouvez retirer des actions — les actions exclues ne seront pas prises en compte dans le calcul Markowitz.`,
+    excludeBtn: "Exclure", restoreBtn: "Restaurer",
+    noFrontierData: "Aucune donnée de frontière",
+    markowitzError: "L'optimisation Markowitz a échoué. Le rendement cible n'est peut-être pas atteignable avec cet ensemble d'actions.",
+    markowitzNoResult: "Aucun résultat Markowitz disponible.",
+    apiConnError: "Impossible de se connecter à l'API. Flask est-il en cours d'exécution ?",
+    sharpeHint: (rf, s) => `Taux sans risque : ${rf}% · Vous obtenez ${s} unités de rendement au-dessus du taux sans risque par unité de risque.`,
+    portfolioLabel: "Votre portefeuille",
+    periodLabel: "Juil–Déc 2025",
+    volAxisLabel: "Volatilité (risque) %", retAxisLabel: "Rendement attendu %",
+    cumRetAxisLabel: "Rendement cumulé (%)",
+    catsLoading: "Chargement des catégories…",
+    alertSelectCat: "Veuillez sélectionner au moins une catégorie.",
+    alertMinStocks: "Au moins 2 actions sont requises pour Markowitz.",
+  }
+};
+
+let currentLang = 'tr';
+function t(key, ...args) {
+  const val = TRANSLATIONS[currentLang][key] ?? TRANSLATIONS['tr'][key];
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === lang.toUpperCase());
+  });
+  // Static data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = TRANSLATIONS[lang][key];
+    if (val && typeof val === 'string') el.innerHTML = val;
+  });
+  // Placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    const val = TRANSLATIONS[lang][key];
+    if (val) el.placeholder = val;
+  });
+  // Re-render dynamic content if already rendered
+  if (state.apiResult?.shortlist) renderStep2();
+  if (state.markResult) renderStep3();
+  if (state.currentStep === 4) renderStep4();
+}
+
 buildCatGrid();
 </script>
 </body>
