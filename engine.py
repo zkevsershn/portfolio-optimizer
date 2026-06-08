@@ -138,10 +138,12 @@ def shortlist_olustur(secilen_kategoriler, zorunlu_hisseler=None, cikartilan_his
     eklenen   = set()
 
     for ticker in zorunlu:
+        if ticker in eklenen or ticker in cikartilan:
+            continue
         entry = next((x for x in tum_sonuclar if x[0] == ticker), None)
-        if entry and ticker not in eklenen and ticker not in cikartilan:
-            shortlist.append({"ticker": ticker, "kategori": entry[1], "zorunlu": True})
-            eklenen.add(ticker)
+        kat = entry[1] if entry else "—"
+        shortlist.append({"ticker": ticker, "kategori": kat, "zorunlu": True})
+        eklenen.add(ticker)
 
     n_kat       = len(secilen_kategoriler)
     zorunlu_say = len(shortlist)
