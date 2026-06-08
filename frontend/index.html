@@ -601,7 +601,79 @@ function toggleExclude(ticker, btn) {
   }
 }
 
-const MEREC_AGIRLIKLAR = {"Bankacılık": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 11.399}, {"kod": "R2", "ad": "ROA", "agirlik": 8.215}, {"kod": "R3", "ad": "ROE", "agirlik": 14.698}, {"kod": "R4", "ad": "E/P", "agirlik": 6.42}, {"kod": "R5", "ad": "PD/DD", "agirlik": 9.247}, {"kod": "R6", "ad": "Beta", "agirlik": 9.418}, {"kod": "R7", "ad": "Faiz Dışı Gel./Faiz Dışı Gid.", "agirlik": 10.07}, {"kod": "R8", "ad": "Likit Varlık/Borç", "agirlik": 8.335}, {"kod": "R9", "ad": "Özkaynak/Krediler", "agirlik": 12.991}, {"kod": "R10", "ad": "Özkaynak/Top. Varlık", "agirlik": 9.208}], "Holding ve Yatırım": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 10.35}, {"kod": "R2", "ad": "ROA", "agirlik": 5.576}, {"kod": "R3", "ad": "ROE", "agirlik": 5.634}, {"kod": "R4", "ad": "E/P", "agirlik": 8.183}, {"kod": "R5", "ad": "PD/DD", "agirlik": 11.504}, {"kod": "R6", "ad": "Beta", "agirlik": 3.08}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 13.4}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 14.47}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 12.847}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 14.957}], "Bilişim ve Teknoloji": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 17.076}, {"kod": "R2", "ad": "ROA", "agirlik": 14.284}, {"kod": "R3", "ad": "ROE", "agirlik": 6.928}, {"kod": "R4", "ad": "E/P", "agirlik": 5.889}, {"kod": "R5", "ad": "PD/DD", "agirlik": 4.896}, {"kod": "R6", "ad": "Beta", "agirlik": 7.95}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 14.247}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 14.602}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 3.876}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 10.25}], "Ulaştırma": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 17.446}, {"kod": "R2", "ad": "ROA", "agirlik": 10.146}, {"kod": "R3", "ad": "ROE", "agirlik": 9.54}, {"kod": "R4", "ad": "E/P", "agirlik": 6.647}, {"kod": "R5", "ad": "PD/DD", "agirlik": 12.691}, {"kod": "R6", "ad": "Beta", "agirlik": 6.677}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 9.346}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 10.517}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 6.175}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 10.816}], "Gıda ve İçecek": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 18.886}, {"kod": "R2", "ad": "ROA", "agirlik": 6.949}, {"kod": "R3", "ad": "ROE", "agirlik": 7.518}, {"kod": "R4", "ad": "E/P", "agirlik": 10.073}, {"kod": "R5", "ad": "PD/DD", "agirlik": 23.369}, {"kod": "R6", "ad": "Beta", "agirlik": 7.482}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 7.495}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 9.59}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 2.114}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 6.523}], "Hizmetler": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 6.004}, {"kod": "R2", "ad": "ROA", "agirlik": 5.86}, {"kod": "R3", "ad": "ROE", "agirlik": 17.019}, {"kod": "R4", "ad": "E/P", "agirlik": 18.741}, {"kod": "R5", "ad": "PD/DD", "agirlik": 27.069}, {"kod": "R6", "ad": "Beta", "agirlik": 3.782}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 3.344}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 4.66}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 3.228}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 10.295}], "Sanayi": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 14.962}, {"kod": "R2", "ad": "ROA", "agirlik": 10.481}, {"kod": "R3", "ad": "ROE", "agirlik": 7.912}, {"kod": "R4", "ad": "E/P", "agirlik": 5.597}, {"kod": "R5", "ad": "PD/DD", "agirlik": 8.113}, {"kod": "R6", "ad": "Beta", "agirlik": 2.494}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 12.67}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 15.549}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 3.316}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 18.905}], "Kimya Petrol Plastik": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 7.22}, {"kod": "R2", "ad": "ROA", "agirlik": 7.366}, {"kod": "R3", "ad": "ROE", "agirlik": 6.749}, {"kod": "R4", "ad": "E/P", "agirlik": 15.946}, {"kod": "R5", "ad": "PD/DD", "agirlik": 32.312}, {"kod": "R6", "ad": "Beta", "agirlik": 9.375}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 3.773}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 4.278}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 1.636}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 11.346}], "İnşaat ve GYO": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 12.178}, {"kod": "R2", "ad": "ROA", "agirlik": 6.994}, {"kod": "R3", "ad": "ROE", "agirlik": 7.701}, {"kod": "R4", "ad": "E/P", "agirlik": 10.703}, {"kod": "R5", "ad": "PD/DD", "agirlik": 9.817}, {"kod": "R6", "ad": "Beta", "agirlik": 2.641}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 7.251}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 9.886}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 27.89}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 4.94}], "Enerji": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 12.996}, {"kod": "R2", "ad": "ROA", "agirlik": 10.257}, {"kod": "R3", "ad": "ROE", "agirlik": 9.319}, {"kod": "R4", "ad": "E/P", "agirlik": 6.94}, {"kod": "R5", "ad": "PD/DD", "agirlik": 10.109}, {"kod": "R6", "ad": "Beta", "agirlik": 2.483}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 12.24}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 10.185}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 11.992}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 13.478}]};
+const MEREC_AGIRLIKLAR = {"Bankacılık": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 11.399}, {"kod": "R2", "ad": "ROA", "agirlik": 8.215}, {"kod": "R3", "ad": "ROE", "agirlik": 14.698}, {"kod": "R4", "ad": "P/E", "agirlik": 6.42}, {"kod": "R5", "ad": "PD/DD", "agirlik": 9.247}, {"kod": "R6", "ad": "Beta", "agirlik": 9.418}, {"kod": "R7", "ad": "Faiz Dışı Gel./Faiz Dışı Gid.", "agirlik": 10.07}, {"kod": "R8", "ad": "Likit Varlık/Borç", "agirlik": 8.335}, {"kod": "R9", "ad": "Özkaynak/Krediler", "agirlik": 12.991}, {"kod": "R10", "ad": "Özkaynak/Top. Varlık", "agirlik": 9.208}], "Holding ve Yatırım": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 10.35}, {"kod": "R2", "ad": "ROA", "agirlik": 5.576}, {"kod": "R3", "ad": "ROE", "agirlik": 5.634}, {"kod": "R4", "ad": "P/E", "agirlik": 8.183}, {"kod": "R5", "ad": "PD/DD", "agirlik": 11.504}, {"kod": "R6", "ad": "Beta", "agirlik": 3.08}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 13.4}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 14.47}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 12.847}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 14.957}], "Bilişim ve Teknoloji": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 17.076}, {"kod": "R2", "ad": "ROA", "agirlik": 14.284}, {"kod": "R3", "ad": "ROE", "agirlik": 6.928}, {"kod": "R4", "ad": "P/E", "agirlik": 5.889}, {"kod": "R5", "ad": "PD/DD", "agirlik": 4.896}, {"kod": "R6", "ad": "Beta", "agirlik": 7.95}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 14.247}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 14.602}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 3.876}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 10.25}], "Ulaştırma": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 17.446}, {"kod": "R2", "ad": "ROA", "agirlik": 10.146}, {"kod": "R3", "ad": "ROE", "agirlik": 9.54}, {"kod": "R4", "ad": "P/E", "agirlik": 6.647}, {"kod": "R5", "ad": "PD/DD", "agirlik": 12.691}, {"kod": "R6", "ad": "Beta", "agirlik": 6.677}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 9.346}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 10.517}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 6.175}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 10.816}], "Gıda ve İçecek": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 18.886}, {"kod": "R2", "ad": "ROA", "agirlik": 6.949}, {"kod": "R3", "ad": "ROE", "agirlik": 7.518}, {"kod": "R4", "ad": "P/E", "agirlik": 10.073}, {"kod": "R5", "ad": "PD/DD", "agirlik": 23.369}, {"kod": "R6", "ad": "Beta", "agirlik": 7.482}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 7.495}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 9.59}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 2.114}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 6.523}], "Hizmetler": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 6.004}, {"kod": "R2", "ad": "ROA", "agirlik": 5.86}, {"kod": "R3", "ad": "ROE", "agirlik": 17.019}, {"kod": "R4", "ad": "P/E", "agirlik": 18.741}, {"kod": "R5", "ad": "PD/DD", "agirlik": 27.069}, {"kod": "R6", "ad": "Beta", "agirlik": 3.782}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 3.344}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 4.66}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 3.228}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 10.295}], "Sanayi": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 14.962}, {"kod": "R2", "ad": "ROA", "agirlik": 10.481}, {"kod": "R3", "ad": "ROE", "agirlik": 7.912}, {"kod": "R4", "ad": "P/E", "agirlik": 5.597}, {"kod": "R5", "ad": "PD/DD", "agirlik": 8.113}, {"kod": "R6", "ad": "Beta", "agirlik": 2.494}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 12.67}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 15.549}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 3.316}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 18.905}], "Kimya Petrol Plastik": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 7.22}, {"kod": "R2", "ad": "ROA", "agirlik": 7.366}, {"kod": "R3", "ad": "ROE", "agirlik": 6.749}, {"kod": "R4", "ad": "P/E", "agirlik": 15.946}, {"kod": "R5", "ad": "PD/DD", "agirlik": 32.312}, {"kod": "R6", "ad": "Beta", "agirlik": 9.375}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 3.773}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 4.278}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 1.636}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 11.346}], "İnşaat ve GYO": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 12.178}, {"kod": "R2", "ad": "ROA", "agirlik": 6.994}, {"kod": "R3", "ad": "ROE", "agirlik": 7.701}, {"kod": "R4", "ad": "P/E", "agirlik": 10.703}, {"kod": "R5", "ad": "PD/DD", "agirlik": 9.817}, {"kod": "R6", "ad": "Beta", "agirlik": 2.641}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 7.251}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 9.886}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 27.89}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 4.94}], "Enerji": [{"kod": "R1", "ad": "Net Kâr Büyümesi", "agirlik": 12.996}, {"kod": "R2", "ad": "ROA", "agirlik": 10.257}, {"kod": "R3", "ad": "ROE", "agirlik": 9.319}, {"kod": "R4", "ad": "P/E", "agirlik": 6.94}, {"kod": "R5", "ad": "PD/DD", "agirlik": 10.109}, {"kod": "R6", "ad": "Beta", "agirlik": 2.483}, {"kod": "R7", "ad": "Cari Oran", "agirlik": 12.24}, {"kod": "R8", "ad": "Asit-Test Oranı", "agirlik": 10.185}, {"kod": "R9", "ad": "KV Borç/Top. Borç", "agirlik": 11.992}, {"kod": "R10", "ad": "Borç/Özkaynak", "agirlik": 13.478}]};
+
+// Kriter isim çevirileri — anahtar her zaman Türkçe "ad" değeri
+const KRITER_ISIMLERI = {
+  tr: {
+    "Net Kâr Büyümesi": "Net Kâr Büyümesi",
+    "ROA": "ROA", "ROE": "ROE", "Beta": "Beta", "PD/DD": "PD/DD", "P/E": "P/E",
+    "Faiz Dışı Gel./Faiz Dışı Gid.": "Faiz Dışı Gel./Faiz Dışı Gid.",
+    "Likit Varlık/Borç": "Likit Varlık/Borç",
+    "Özkaynak/Krediler": "Özkaynak/Krediler",
+    "Özkaynak/Top. Varlık": "Özkaynak/Top. Varlık",
+    "Cari Oran": "Cari Oran",
+    "Asit-Test Oranı": "Asit-Test Oranı",
+    "KV Borç/Top. Borç": "KV Borç/Top. Borç",
+    "Borç/Özkaynak": "Borç/Özkaynak",
+  },
+  en: {
+    "Net Kâr Büyümesi": "Net Profit Growth",
+    "ROA": "ROA", "ROE": "ROE", "Beta": "Beta", "PD/DD": "P/BV", "P/E": "P/E",
+    "Faiz Dışı Gel./Faiz Dışı Gid.": "Non-Int. Income / Non-Int. Expense",
+    "Likit Varlık/Borç": "Liquid Assets / Debt",
+    "Özkaynak/Krediler": "Equity / Loans",
+    "Özkaynak/Top. Varlık": "Equity / Total Assets",
+    "Cari Oran": "Current Ratio",
+    "Asit-Test Oranı": "Quick Ratio",
+    "KV Borç/Top. Borç": "ST Debt / Total Debt",
+    "Borç/Özkaynak": "Debt / Equity",
+  },
+  fr: {
+    "Net Kâr Büyümesi": "Croissance du bénéfice net",
+    "ROA": "ROA", "ROE": "ROE", "Beta": "Beta", "PD/DD": "P/VB", "P/E": "P/E",
+    "Faiz Dışı Gel./Faiz Dışı Gid.": "Prod. hors int. / Ch. hors int.",
+    "Likit Varlık/Borç": "Actifs liquides / Dettes",
+    "Özkaynak/Krediler": "Capitaux propres / Crédits",
+    "Özkaynak/Top. Varlık": "Capitaux propres / Total actif",
+    "Cari Oran": "Ratio de liquidité",
+    "Asit-Test Oranı": "Ratio de liquidité immédiate",
+    "KV Borç/Top. Borç": "Dette CT / Dette totale",
+    "Borç/Özkaynak": "Dette / Capitaux propres",
+  },
+};
+
+// Kategori adı çevirileri
+const KAT_ISIMLERI = {
+  tr: {
+    "Bankacılık": "Bankacılık", "Holding ve Yatırım": "Holding ve Yatırım",
+    "Bilişim ve Teknoloji": "Bilişim ve Teknoloji", "Ulaştırma": "Ulaştırma",
+    "Gıda ve İçecek": "Gıda ve İçecek", "Hizmetler": "Hizmetler",
+    "Sanayi": "Sanayi", "Kimya Petrol Plastik": "Kimya Petrol Plastik",
+    "İnşaat ve GYO": "İnşaat ve GYO", "Enerji": "Enerji",
+  },
+  en: {
+    "Bankacılık": "Banking", "Holding ve Yatırım": "Holding & Investment",
+    "Bilişim ve Teknoloji": "IT & Technology", "Ulaştırma": "Transportation",
+    "Gıda ve İçecek": "Food & Beverage", "Hizmetler": "Services",
+    "Sanayi": "Industry", "Kimya Petrol Plastik": "Chemicals, Petroleum & Plastics",
+    "İnşaat ve GYO": "Construction & REIT", "Enerji": "Energy",
+  },
+  fr: {
+    "Bankacılık": "Banques", "Holding ve Yatırım": "Holdings & Investissement",
+    "Bilişim ve Teknoloji": "IT & Technologie", "Ulaştırma": "Transport",
+    "Gıda ve İçecek": "Alimentation & Boissons", "Hizmetler": "Services",
+    "Sanayi": "Industrie", "Kimya Petrol Plastik": "Chimie, Pétrole & Plastiques",
+    "İnşaat ve GYO": "Construction & SIIC", "Enerji": "Énergie",
+  },
+};
+
+function kriterAdi(ad) {
+  return (KRITER_ISIMLERI[currentLang] ?? KRITER_ISIMLERI.tr)[ad] ?? ad;
+}
+function katAdi(kat) {
+  return (KAT_ISIMLERI[currentLang] ?? KAT_ISIMLERI.tr)[kat] ?? kat;
+}
 
 function renderMerecContent() {
   const seciliKatlar = Array.from(state.selectedCats);
@@ -609,18 +681,17 @@ function renderMerecContent() {
   seciliKatlar.forEach(k => { if (MEREC_AGIRLIKLAR[k]) agirliklar[k] = MEREC_AGIRLIKLAR[k]; });
   const wrap = document.getElementById('merecContent');
   wrap.innerHTML = '';
-  // 2 sütun grid container
   const grid = document.createElement('div');
   grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:1rem 2rem;';
   Object.entries(agirliklar).forEach(([kat, kriterler]) => {
     const maxW = kriterler[0]?.agirlik || 1;
     const sec = document.createElement('div');
-    sec.innerHTML = `<div class="section-title" style="margin-bottom:.5rem">${kat}</div>`;
+    sec.innerHTML = `<div class="section-title" style="margin-bottom:.5rem">${katAdi(kat)}</div>`;
     kriterler.forEach(k => {
       const barW = Math.round((k.agirlik / maxW) * 100);
       sec.insertAdjacentHTML('beforeend', `
         <div class="merec-row">
-          <div class="merec-label">${k.kod} — ${k.ad}</div>
+          <div class="merec-label">${k.kod} — ${kriterAdi(k.ad)}</div>
           <div class="merec-bg"><div class="merec-fill" style="width:${barW}%"></div></div>
           <div class="merec-pct">%${k.agirlik.toFixed(1)}</div>
         </div>`);
